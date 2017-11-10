@@ -3,10 +3,7 @@ package org.seeking.jredis;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
-import org.seeking.jredis.command.Command;
-import org.seeking.jredis.command.GetCommand;
-import org.seeking.jredis.command.PingCommand;
-import org.seeking.jredis.command.SetCommand;
+import org.seeking.jredis.command.*;
 import org.seeking.jredis.reply.ErrorReply;
 
 import java.util.List;
@@ -15,12 +12,18 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class JRedisHandler extends IoHandlerAdapter {
 
-    static Map<String, String> memory = new ConcurrentHashMap<>();
+    static Map<String, Object> memory = new ConcurrentHashMap<>();
 
     static Map<String, Command> commands = new CaseInsensitiveMap() {{
+        put("AUTH", new AuthCommand());
+        put("EXIST", new ExistsCommand(memory));
+        put("INCR", new IncrCommand(memory));
+        put("PING", new PingCommand());
         put("GET", new GetCommand(memory));
         put("SET", new SetCommand(memory));
-        put("PING", new PingCommand());
+        put("LPUSH", new LPushCommand(memory));
+        put("RPOP", new RPopCommand(memory));
+        put("COMMAND", new CmdCommand(commands));
     }};
 
     @Override

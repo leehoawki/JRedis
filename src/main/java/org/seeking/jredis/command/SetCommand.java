@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 public class SetCommand implements Command {
-    private Map<String, String> memory;
+    private Map<String, Object> memory;
 
-    public SetCommand(Map<String, String> memory) {
+    public SetCommand(Map<String, Object> memory) {
         this.memory = memory;
     }
 
