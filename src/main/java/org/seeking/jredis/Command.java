@@ -1,6 +1,4 @@
-package org.seeking.jredis.command;
-
-import org.seeking.jredis.reply.Reply;
+package org.seeking.jredis;
 
 import java.util.List;
 

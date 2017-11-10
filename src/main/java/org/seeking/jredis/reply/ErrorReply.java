@@ -1,5 +1,7 @@
 package org.seeking.jredis.reply;
 
+import org.seeking.jredis.Reply;
+
 public class ErrorReply implements Reply {
     private String status;
 

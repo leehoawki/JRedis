@@ -1,11 +1,10 @@
 package org.seeking.jredis.command;
 
 import junit.framework.TestCase;
-import org.junit.Assert;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
-public class GetCommandTest extends TestCase {
+public class IncrCommandTest extends TestCase {
     Jedis jedis;
 
     @Override
@@ -20,9 +19,6 @@ public class GetCommandTest extends TestCase {
 
     @Test
     public void test() {
-        jedis.set("getTest", "b");
-        Assert.assertEquals("b", jedis.get("getTest"));
-        jedis.set("getTest", "c");
-        Assert.assertEquals("c", jedis.get("getTest"));
+
     }
 }

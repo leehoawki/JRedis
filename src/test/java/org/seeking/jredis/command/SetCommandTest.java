@@ -18,9 +18,9 @@ public class SetCommandTest extends TestCase {
     }
 
     @Test
-    public void testSet() {
-        jedis.set("a", "b");
-        jedis.set("a", "b");
-        jedis.set("a", "c");
+    public void test() {
+        jedis.set("setTest", "b");
+        jedis.set("setTest", "b");
+        jedis.set("setTest", "c");
     }
 }

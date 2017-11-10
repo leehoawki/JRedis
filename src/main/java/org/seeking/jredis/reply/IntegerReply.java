@@ -1,6 +1,8 @@
 package org.seeking.jredis.reply;
 
-public class IntegerReply implements Reply{
+import org.seeking.jredis.Reply;
+
+public class IntegerReply implements Reply {
     private int value;
 
     public IntegerReply(int value) {

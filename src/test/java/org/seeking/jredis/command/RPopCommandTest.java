@@ -19,18 +19,18 @@ public class RPopCommandTest extends TestCase {
     }
 
     @Test
-    public void testRPop() {
-        jedis.lpush("wa", "wa");
-        jedis.lpush("wa", "ha");
-        jedis.lpush("wa", "ha");
-        jedis.lpush("wa", "su", "ba", "ra");
+    public void test() {
+        jedis.lpush("rpoptest", "wa");
+        jedis.lpush("rpoptest", "ha");
+        jedis.lpush("rpoptest", "ha");
+        jedis.lpush("rpoptest", "su", "ba", "ra");
 
-        Assert.assertEquals("wa", jedis.rpop("wa"));
-        Assert.assertEquals("ha", jedis.rpop("wa"));
-        Assert.assertEquals("ha", jedis.rpop("wa"));
-        Assert.assertEquals("su", jedis.rpop("wa"));
-        Assert.assertEquals("ba", jedis.rpop("wa"));
-        Assert.assertEquals("ra", jedis.rpop("wa"));
-        Assert.assertEquals(null, jedis.rpop("wa"));
+        Assert.assertEquals("wa", jedis.rpop("rpoptest"));
+        Assert.assertEquals("ha", jedis.rpop("rpoptest"));
+        Assert.assertEquals("ha", jedis.rpop("rpoptest"));
+        Assert.assertEquals("su", jedis.rpop("rpoptest"));
+        Assert.assertEquals("ba", jedis.rpop("rpoptest"));
+        Assert.assertEquals("ra", jedis.rpop("rpoptest"));
+        Assert.assertEquals(null, jedis.rpop("rpoptest"));
     }
 }

@@ -30,16 +30,13 @@ public class JRedisCodecDecoder implements ProtocolDecoder {
     }
 
     static char readChar(IoBuffer in) {
-        if (in.hasRemaining()) return (char) in.get();
-        throw new IllegalStateException("");
+        return (char) in.get();
     }
 
     static void readChar(IoBuffer in, char ch) {
-        if (in.hasRemaining()) {
-            byte b = in.get();
-            if ((char) b == ch) return;
-            throw new IllegalStateException("");
-        }
+        byte b = in.get();
+        if ((char) b == ch) return;
+        throw new IllegalStateException(ch + " expected, get a " + (char) b);
     }
 
     static String readString(IoBuffer in, int length) {
@@ -49,13 +46,11 @@ public class JRedisCodecDecoder implements ProtocolDecoder {
     }
 
     static int readDigit(IoBuffer in) {
-        if (in.hasRemaining()) {
-            byte b = in.get();
-            if (b <= '9' && b >= '0') {
-                return b - '0';
-            }
+        byte b = in.get();
+        if (b <= '9' && b >= '0') {
+            return b - '0';
         }
-        throw new IllegalStateException("");
+        throw new IllegalStateException("Digit expected, get a" + (char) b);
     }
 
     static int readNumber(IoBuffer in) {

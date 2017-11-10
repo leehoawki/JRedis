@@ -18,10 +18,10 @@ public class LPushCommandTest extends TestCase {
     }
 
     @Test
-    public void testLPush() {
-        jedis.lpush("wa","wa");
-        jedis.lpush("wa","ha");
-        jedis.lpush("wa","ha");
-        jedis.lpush("wa","su","ba","ra");
+    public void test() {
+        jedis.lpush("lpushtest","wa");
+        jedis.lpush("lpushtest","ha");
+        jedis.lpush("lpushtest","ha");
+        jedis.lpush("lpushtest","su","ba","ra");
     }
 }

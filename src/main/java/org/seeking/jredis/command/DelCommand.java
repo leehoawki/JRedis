@@ -7,17 +7,20 @@ import org.seeking.jredis.Reply;
 import java.util.List;
 import java.util.Map;
 
-public class ExistsCommand implements Command {
+public class DelCommand implements Command {
     private Map<String, Object> memory;
 
-    public ExistsCommand(Map<String, Object> memory) {
+    public DelCommand(Map<String, Object> memory) {
         this.memory = memory;
     }
 
     @Override
     public Reply eval(List<String> params) {
-        String key = params.get(0);
-        if (memory.containsKey(key)) return new IntegerReply(1);
-        return new IntegerReply(0);
+        int count = 0;
+        for (String key : params) {
+            Object value = memory.remove(key);
+            if (value != null) count += 1;
+        }
+        return new IntegerReply(count);
     }
 }

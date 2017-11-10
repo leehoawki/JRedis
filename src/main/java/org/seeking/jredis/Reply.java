@@ -1,4 +1,4 @@
-package org.seeking.jredis.reply;
+package org.seeking.jredis;
 
 public interface Reply {
 

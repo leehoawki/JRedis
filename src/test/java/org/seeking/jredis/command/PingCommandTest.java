@@ -18,7 +18,7 @@ public class PingCommandTest extends TestCase {
     }
 
     @Test
-    public void testPing() {
+    public void test() {
         for (int i = 0; i < 999; i++) {
             jedis.ping();
         }

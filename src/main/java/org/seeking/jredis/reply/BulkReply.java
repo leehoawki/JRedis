@@ -1,5 +1,7 @@
 package org.seeking.jredis.reply;
 
+import org.seeking.jredis.Reply;
+
 public class BulkReply implements Reply {
     private String value;
 

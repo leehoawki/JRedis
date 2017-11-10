@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
-public class GetCommandTest extends TestCase {
+public class ExistsCommandTest extends TestCase {
     Jedis jedis;
 
     @Override
@@ -20,9 +20,8 @@ public class GetCommandTest extends TestCase {
 
     @Test
     public void test() {
-        jedis.set("getTest", "b");
-        Assert.assertEquals("b", jedis.get("getTest"));
-        jedis.set("getTest", "c");
-        Assert.assertEquals("c", jedis.get("getTest"));
+        Assert.assertEquals(false, jedis.exists("existTest"));
+        jedis.set("existTest", "a");
+        Assert.assertEquals(true, jedis.exists("existTest"));
     }
 }

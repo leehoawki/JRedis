@@ -1,6 +1,8 @@
 package org.seeking.jredis.reply;
 
-public class StatusReply implements Reply{
+import org.seeking.jredis.Reply;
+
+public class StatusReply implements Reply {
     private String status;
 
     public StatusReply(String status) {

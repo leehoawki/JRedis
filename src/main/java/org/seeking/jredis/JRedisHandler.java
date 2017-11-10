@@ -16,7 +16,8 @@ public class JRedisHandler extends IoHandlerAdapter {
 
     static Map<String, Command> commands = new CaseInsensitiveMap() {{
         put("AUTH", new AuthCommand());
-        put("EXIST", new ExistsCommand(memory));
+        put("EXISTS", new ExistsCommand(memory));
+        put("DEL", new DelCommand(memory));
         put("INCR", new IncrCommand(memory));
         put("PING", new PingCommand());
         put("GET", new GetCommand(memory));
@@ -28,6 +29,7 @@ public class JRedisHandler extends IoHandlerAdapter {
 
     @Override
     public void messageReceived(IoSession session, Object message) throws Exception {
+        System.out.println(message);
         List<String> list = (List<String>) message;
         Command command = commands.get(list.get(0));
         if (command == null) {

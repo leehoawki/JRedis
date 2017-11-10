@@ -1,5 +1,7 @@
 package org.seeking.jredis.reply;
 
+import org.seeking.jredis.Reply;
+
 import java.util.List;
 
 public class MultiBulkReply implements Reply {
