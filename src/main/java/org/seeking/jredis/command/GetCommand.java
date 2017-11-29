@@ -17,7 +17,7 @@ public class GetCommand implements Command {
     @Override
     public Reply eval(List<String> params) {
         String key = params.get(0);
-        String value = (String) memory.get(key);
+        String value = memory.get(key).toString();
         return new BulkReply(value);
     }
 }

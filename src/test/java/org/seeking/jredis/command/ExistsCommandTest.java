@@ -20,6 +20,7 @@ public class ExistsCommandTest extends TestCase {
 
     @Test
     public void test() {
+        jedis.del("existTest");
         Assert.assertEquals(false, jedis.exists("existTest"));
         jedis.set("existTest", "a");
         Assert.assertEquals(true, jedis.exists("existTest"));
