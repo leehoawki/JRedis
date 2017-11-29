@@ -29,7 +29,7 @@ public class JRedisHandler extends IoHandlerAdapter {
 
     @Override
     public void messageReceived(IoSession session, Object message) throws Exception {
-        System.out.println(message);
+        System.out.println("messageReceived:" + message);
         List<String> list = (List<String>) message;
         Command command = commands.get(list.get(0));
         if (command == null) {

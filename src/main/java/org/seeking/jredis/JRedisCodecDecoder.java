@@ -2,46 +2,55 @@ package org.seeking.jredis;
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
-import org.apache.mina.filter.codec.ProtocolDecoder;
+import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 
+import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JRedisCodecDecoder implements ProtocolDecoder {
+public class JRedisCodecDecoder extends CumulativeProtocolDecoder {
 
     @Override
-    public void decode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
-        readChar(in, '*');
-        int count = readNumber(in);
-        readChar(in, '\r');
-        readChar(in, '\n');
-        List<String> list = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            readChar(in, '$');
-            int length = readDigit(in);
-            readChar(in, '\r');
-            readChar(in, '\n');
-            list.add(readString(in, length));
-            readChar(in, '\r');
-            readChar(in, '\n');
+    protected boolean doDecode(IoSession ioSession, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
+        int start = in.position();
+        try {
+            readChar(in, '*');
+            int count = readNumber(in);
+            readChar(in, '\r', '\n');
+            List<String> list = new ArrayList<>();
+            for (int i = 0; i < count; i++) {
+                readChar(in, '$');
+                int length = readDigit(in);
+                readChar(in, '\r', '\n');
+                list.add(readString(in, length));
+                readChar(in, '\r', '\n');
+            }
+            out.write(list);
+            return true;
+        } catch (BufferUnderflowException ex) {
+            in.position(start);
+            return false;
         }
-        out.write(list);
     }
 
     static char readChar(IoBuffer in) {
         return (char) in.get();
     }
 
-    static void readChar(IoBuffer in, char ch) {
-        byte b = in.get();
-        if ((char) b == ch) return;
-        throw new IllegalStateException(ch + " expected, get a " + (char) b);
+    static void readChar(IoBuffer in, char... chs) {
+        for (char expect : chs) {
+            char get = readChar(in);
+            if (get != expect) throw new IllegalStateException(expect + " expected, get a " + get);
+        }
+        return;
     }
 
     static String readString(IoBuffer in, int length) {
         byte[] bytes = new byte[length];
-        in.get(bytes);
+        for (int i = 0; i < length; i++) {
+            bytes[i] = in.get();
+        }
         return new String(bytes);
     }
 
@@ -50,7 +59,7 @@ public class JRedisCodecDecoder implements ProtocolDecoder {
         if (b <= '9' && b >= '0') {
             return b - '0';
         }
-        throw new IllegalStateException("Digit expected, get a" + (char) b);
+        throw new IllegalStateException("Digit expected, get a " + (char) b);
     }
 
     static int readNumber(IoBuffer in) {
