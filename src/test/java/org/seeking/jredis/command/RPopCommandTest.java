@@ -32,5 +32,7 @@ public class RPopCommandTest extends TestCase {
         Assert.assertEquals("ba", jedis.rpop("rpoptest"));
         Assert.assertEquals("ra", jedis.rpop("rpoptest"));
         Assert.assertEquals(null, jedis.rpop("rpoptest"));
+
+        jedis.del("rpoptest");
     }
 }

@@ -14,18 +14,21 @@ public class JRedisHandler extends IoHandlerAdapter {
 
     static Map<String, Object> memory = new ConcurrentHashMap<>();
 
-    static Map<String, Command> commands = new CaseInsensitiveMap() {{
-        put("AUTH", new AuthCommand());
-        put("EXISTS", new ExistsCommand(memory));
-        put("DEL", new DelCommand(memory));
-        put("INCR", new IncrCommand(memory));
-        put("PING", new PingCommand());
-        put("GET", new GetCommand(memory));
-        put("SET", new SetCommand(memory));
-        put("LPUSH", new LPushCommand(memory));
-        put("RPOP", new RPopCommand(memory));
-        put("COMMAND", new CmdCommand(commands));
-    }};
+    static Map<String, Command> commands = new CaseInsensitiveMap();
+
+    static {
+        commands.put("AUTH", new AuthCommand());
+        commands.put("EXISTS", new ExistsCommand(memory));
+        commands.put("DEL", new DelCommand(memory));
+        commands.put("INCR", new IncrCommand(memory));
+        commands.put("PING", new PingCommand());
+        commands.put("GET", new GetCommand(memory));
+        commands.put("SET", new SetCommand(memory));
+        commands.put("LPUSH", new LPushCommand(memory));
+        commands.put("RPOP", new RPopCommand(memory));
+        commands.put("KEYS", new KeysCommand(memory));
+        commands.put("COMMAND", new CmdCommand(commands));
+    };
 
     @Override
     public void messageReceived(IoSession session, Object message) throws Exception {

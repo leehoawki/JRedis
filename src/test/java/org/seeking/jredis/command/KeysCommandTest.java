@@ -1,11 +1,10 @@
 package org.seeking.jredis.command;
 
 import junit.framework.TestCase;
-import org.junit.Assert;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
-public class ExistsCommandTest extends TestCase {
+public class KeysCommandTest extends TestCase {
     Jedis jedis;
 
     @Override
@@ -20,9 +19,6 @@ public class ExistsCommandTest extends TestCase {
 
     @Test
     public void test() {
-        Assert.assertEquals(false, jedis.exists("existTest"));
-        jedis.set("existTest", "a");
-        Assert.assertEquals(true, jedis.exists("existTest"));
-        jedis.del("existTest");
+        jedis.keys("*");
     }
 }

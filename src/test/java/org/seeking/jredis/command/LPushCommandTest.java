@@ -23,5 +23,6 @@ public class LPushCommandTest extends TestCase {
         jedis.lpush("lpushtest","ha");
         jedis.lpush("lpushtest","ha");
         jedis.lpush("lpushtest","su","ba","ra");
+        jedis.del("lpushtest");
     }
 }

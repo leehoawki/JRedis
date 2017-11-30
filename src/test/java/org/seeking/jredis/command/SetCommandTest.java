@@ -22,5 +22,7 @@ public class SetCommandTest extends TestCase {
         jedis.set("setTest", "b");
         jedis.set("setTest", "b");
         jedis.set("setTest", "c");
+
+        jedis.del("setTest");
     }
 }

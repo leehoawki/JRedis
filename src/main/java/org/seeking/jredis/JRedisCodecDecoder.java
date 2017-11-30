@@ -1,12 +1,15 @@
 package org.seeking.jredis;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 
 import java.nio.BufferUnderflowException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class JRedisCodecDecoder extends CumulativeProtocolDecoder {
@@ -15,13 +18,25 @@ public class JRedisCodecDecoder extends CumulativeProtocolDecoder {
     protected boolean doDecode(IoSession ioSession, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
         int start = in.position();
         try {
-            readChar(in, '*');
+            if (tryRead(in, '*')) {
+                String inline = in.getString(Charset.defaultCharset().newDecoder());
+                String last = null;
+                for (String command : StringUtils.split(inline, "\r\n")) {
+                    out.write(Arrays.asList(StringUtils.split(command)));
+                    last = command;
+                }
+                if (last != null && !last.endsWith("\r\n")) {
+                    in.position(4096 - last.length());
+                    return false;
+                }
+                return true;
+            }
             int count = readNumber(in);
             readChar(in, '\r', '\n');
             List<String> list = new ArrayList<>();
             for (int i = 0; i < count; i++) {
                 readChar(in, '$');
-                int length = readDigit(in);
+                int length = readNumber(in);
                 readChar(in, '\r', '\n');
                 list.add(readString(in, length));
                 readChar(in, '\r', '\n');
@@ -36,6 +51,18 @@ public class JRedisCodecDecoder extends CumulativeProtocolDecoder {
 
     static char readChar(IoBuffer in) {
         return (char) in.get();
+    }
+
+    static boolean tryRead(IoBuffer in, char... chs) {
+        int pos = in.position();
+        for (char expect : chs) {
+            char get = readChar(in);
+            if (get != expect) {
+                in.position(pos);
+                return true;
+            }
+        }
+        return false;
     }
 
     static void readChar(IoBuffer in, char... chs) {

@@ -24,5 +24,6 @@ public class GetCommandTest extends TestCase {
         Assert.assertEquals("b", jedis.get("getTest"));
         jedis.set("getTest", "c");
         Assert.assertEquals("c", jedis.get("getTest"));
+        jedis.del("getTest");
     }
 }
