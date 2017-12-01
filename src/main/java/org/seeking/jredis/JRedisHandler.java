@@ -25,6 +25,8 @@ public class JRedisHandler extends IoHandlerAdapter {
         commands.put("GET", new GetCommand(memory));
         commands.put("SET", new SetCommand(memory));
         commands.put("LPUSH", new LPushCommand(memory));
+        commands.put("RPUSH", new RPushCommand(memory));
+        commands.put("LPOP", new LPopCommand(memory));
         commands.put("RPOP", new RPopCommand(memory));
         commands.put("KEYS", new KeysCommand(memory));
         commands.put("COMMAND", new CmdCommand(commands));
