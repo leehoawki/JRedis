@@ -20,14 +20,8 @@ public class JRedisCodecDecoder extends CumulativeProtocolDecoder {
         try {
             if (tryRead(in, '*')) {
                 String inline = in.getString(Charset.defaultCharset().newDecoder());
-                String last = null;
                 for (String command : StringUtils.split(inline, "\r\n")) {
                     out.write(Arrays.asList(StringUtils.split(command)));
-                    last = command;
-                }
-                if (last != null && !last.endsWith("\r\n")) {
-                    in.position(4096 - last.length());
-                    return false;
                 }
                 return true;
             }
