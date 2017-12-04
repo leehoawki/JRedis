@@ -1,18 +1,20 @@
 package org.seeking.jredis.command;
 
 import org.seeking.jredis.Command;
+import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.reply.IntegerReply;
 import org.seeking.jredis.Reply;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LPushCommand implements Command {
     private Map<String, Object> memory;
 
+    private CommandSpec commandSpec;
+
     public LPushCommand(Map<String, Object> memory) {
         this.memory = memory;
+        this.commandSpec = new CommandSpec(-3, new ArrayList<>(Arrays.asList("write", "denyoom", "fast")), 1, 1, 1);
     }
 
     @Override
@@ -29,5 +31,10 @@ public class LPushCommand implements Command {
             }
         }
         return new IntegerReply(list.size());
+    }
+
+    @Override
+    public CommandSpec getCommandSpec() {
+        return commandSpec;
     }
 }

@@ -1,11 +1,13 @@
 package org.seeking.jredis.command;
 
 import org.seeking.jredis.Command;
+import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.Reply;
 import org.seeking.jredis.reply.BulkReply;
 import org.seeking.jredis.reply.MultiBulkReply;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -13,8 +15,11 @@ import java.util.regex.Pattern;
 public class KeysCommand implements Command {
     private Map<String, Object> memory;
 
+    private CommandSpec commandSpec;
+
     public KeysCommand(Map<String, Object> memory) {
         this.memory = memory;
+        this.commandSpec = new CommandSpec(2, new ArrayList<>(Arrays.asList("readonly", "sort_for_script")), 0, 0, 0);
     }
 
     @Override
@@ -27,5 +32,10 @@ public class KeysCommand implements Command {
             }
         }
         return new MultiBulkReply(list);
+    }
+
+    @Override
+    public CommandSpec getCommandSpec() {
+        return commandSpec;
     }
 }

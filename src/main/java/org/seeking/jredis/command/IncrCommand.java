@@ -1,18 +1,24 @@
 package org.seeking.jredis.command;
 
 import org.seeking.jredis.Command;
+import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.Reply;
 import org.seeking.jredis.reply.ErrorReply;
 import org.seeking.jredis.reply.IntegerReply;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class IncrCommand implements Command {
     private Map<String, Object> memory;
 
+    private CommandSpec commandSpec;
+
     public IncrCommand(Map<String, Object> memory) {
         this.memory = memory;
+        this.commandSpec = new CommandSpec(2, new ArrayList<>(Arrays.asList("write", "denyoom", "fast")), 1, 1, 1);
     }
 
     @Override
@@ -30,5 +36,10 @@ public class IncrCommand implements Command {
         } catch (NumberFormatException ex) {
             return new ErrorReply("WRONGTYPE Operation against a key holding the wrong kind of value");
         }
+    }
+
+    @Override
+    public CommandSpec getCommandSpec() {
+        return commandSpec;
     }
 }

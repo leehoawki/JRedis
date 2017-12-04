@@ -47,6 +47,6 @@ public class JRedisHandler extends IoHandlerAdapter {
 
     @Override
     public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        System.out.println(cause);
     }
 }
