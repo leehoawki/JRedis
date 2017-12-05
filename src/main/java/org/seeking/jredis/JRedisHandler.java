@@ -5,6 +5,7 @@ import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.seeking.jredis.command.*;
 import org.seeking.jredis.reply.ErrorReply;
+import org.seeking.jredis.reply.StatusReply;
 
 import java.util.List;
 import java.util.Map;
@@ -25,36 +26,43 @@ public class JRedisHandler extends IoHandlerAdapter {
             this.requirepass = true;
         }
 
-        commands.put("AUTH", new AuthCommand(password));
-        commands.put("EXISTS", new ExistsCommand(memory));
-        commands.put("DEL", new DelCommand(memory));
-        commands.put("INCR", new IncrCommand(memory));
-        commands.put("PING", new PingCommand());
-        commands.put("QUIT", new QuitCommand());
-        commands.put("GET", new GetCommand(memory));
-        commands.put("SET", new SetCommand(memory));
-        commands.put("LPUSH", new LPushCommand(memory));
-        commands.put("RPUSH", new RPushCommand(memory));
-        commands.put("LPOP", new LPopCommand(memory));
-        commands.put("RPOP", new RPopCommand(memory));
-        commands.put("KEYS", new KeysCommand(memory));
-        commands.put("COMMAND", new CmdCommand(commands));
+        commands.put("auth", new AuthCommand(password));
+        commands.put("exists", new ExistsCommand(memory));
+        commands.put("del", new DelCommand(memory));
+        commands.put("incr", new IncrCommand(memory));
+        commands.put("ping", new PingCommand());
+        commands.put("get", new GetCommand(memory));
+        commands.put("set", new SetCommand(memory));
+        commands.put("lpush", new LPushCommand(memory));
+        commands.put("rpush", new RPushCommand(memory));
+        commands.put("lpop", new LPopCommand(memory));
+        commands.put("rpop", new RPopCommand(memory));
+        commands.put("keys", new KeysCommand(memory));
+        commands.put("command", new CmdCommand(commands));
     }
 
     @Override
     public void messageReceived(IoSession session, Object message) throws Exception {
-        System.out.println("messageReceived:" + message);
         List<String> list = (List<String>) message;
+        if ("quit".equalsIgnoreCase(list.get(0))) {
+            session.closeNow();
+            session.write(new StatusReply("OK"));
+            return;
+        }
         Command command = commands.get(list.get(0));
         if (command == null) {
             session.write(new ErrorReply("ERR unknown command '" + list.get(0) + "'"));
+            return;
+        }
+        List<String> parameters = list.subList(1, list.size());
+        if ((command.getCommandSpec().getArity() > 0 && parameters.size() != command.getCommandSpec().getArity()) || parameters.size() < -command.getCommandSpec().getArity()) {
+            session.write(new ErrorReply("ERR wrong number of arguments for '" + list.get(0) + "' command"));
             return;
         }
         if (requirepass && session.getAttribute("authenticated") == null && command.getClass() != AuthCommand.class) {
             session.write(new ErrorReply("NOAUTH Authentication required."));
             return;
         }
-        List<String> parameters = list.subList(1, list.size());
         session.write(command.eval(parameters, session));
     }
 
