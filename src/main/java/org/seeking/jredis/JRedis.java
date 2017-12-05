@@ -14,6 +14,7 @@ public class JRedis {
         Options options = new Options();
         options.addOption("h", "help", false, "Print usage information");
         options.addOption("p", "port", true, "Server port (default: 9000)");
+        options.addOption("a", "auth", true, "Authentication required, enter password as parameter");
         CommandLine commandLine;
         try {
             commandLine = parser.parse(options, args);
@@ -32,9 +33,11 @@ public class JRedis {
             port = Integer.valueOf(commandLine.getOptionValue("p"));
         }
 
+        String password = commandLine.getOptionValue("a");
+
         IoAcceptor acceptor = new NioSocketAcceptor();
         acceptor.getFilterChain().addLast("codec", new ProtocolCodecFilter(new JRedisCodecFactory()));
-        acceptor.setHandler(new JRedisHandler());
+        acceptor.setHandler(new JRedisHandler(password));
         acceptor.getSessionConfig().setReadBufferSize(2048);
         acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 10);
         acceptor.bind(new InetSocketAddress(port));

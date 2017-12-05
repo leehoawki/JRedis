@@ -1,5 +1,6 @@
 package org.seeking.jredis.command;
 
+import org.apache.mina.core.session.IoSession;
 import org.seeking.jredis.Command;
 import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.reply.IntegerReply;
@@ -18,12 +19,12 @@ public class LPushCommand implements Command {
     }
 
     @Override
-    public Reply eval(List<String> params) {
+    public Reply eval(List<String> params, IoSession ioSession) {
         String key = params.get(0);
         List<String> value = params.subList(1, params.size());
         LinkedList<String> list = (LinkedList<String>) memory.get(key);
         if (list == null) {
-            list = new LinkedList<String>(value);
+            list = new LinkedList<>(value);
             memory.put(key, list);
         } else {
             for (String string : value) {

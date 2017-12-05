@@ -1,5 +1,6 @@
 package org.seeking.jredis.command;
 
+import org.apache.mina.core.session.IoSession;
 import org.seeking.jredis.Command;
 import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.reply.IntegerReply;
@@ -21,7 +22,7 @@ public class ExistsCommand implements Command {
     }
 
     @Override
-    public Reply eval(List<String> params) {
+    public Reply eval(List<String> params, IoSession ioSession) {
         String key = params.get(0);
         if (memory.containsKey(key)) return new IntegerReply(1);
         return new IntegerReply(0);

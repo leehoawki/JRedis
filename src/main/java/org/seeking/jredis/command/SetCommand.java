@@ -1,5 +1,6 @@
 package org.seeking.jredis.command;
 
+import org.apache.mina.core.session.IoSession;
 import org.seeking.jredis.Command;
 import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.Reply;
@@ -21,7 +22,7 @@ public class SetCommand implements Command {
     }
 
     @Override
-    public Reply eval(List<String> params) {
+    public Reply eval(List<String> params, IoSession ioSession) {
         String key = params.get(0);
         String value = params.get(1);
         memory.put(key, value);

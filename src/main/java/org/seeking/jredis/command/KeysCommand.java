@@ -1,5 +1,6 @@
 package org.seeking.jredis.command;
 
+import org.apache.mina.core.session.IoSession;
 import org.seeking.jredis.Command;
 import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.Reply;
@@ -23,7 +24,7 @@ public class KeysCommand implements Command {
     }
 
     @Override
-    public Reply eval(List<String> params) {
+    public Reply eval(List<String> params, IoSession ioSession) {
         String pattern = params.get(0).replace("*", ".*").replace("?", ".?");
         List<Reply> list = new ArrayList<>();
         for (String key : memory.keySet()) {

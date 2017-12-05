@@ -11,13 +11,23 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class JRedisHandler extends IoHandlerAdapter {
+    Map<String, Object> memory = new ConcurrentHashMap<>();
 
-    static Map<String, Object> memory = new ConcurrentHashMap<>();
+    Map<String, Command> commands = new CaseInsensitiveMap();
 
-    static Map<String, Command> commands = new CaseInsensitiveMap();
+    String password;
 
-    static {
-        commands.put("AUTH", new AuthCommand());
+    boolean requirepass;
+
+    boolean authenticated;
+
+    public JRedisHandler(String password) {
+        this.password = password;
+        if (this.password != null) {
+            this.requirepass = true;
+        }
+
+        commands.put("AUTH", new AuthCommand(password));
         commands.put("EXISTS", new ExistsCommand(memory));
         commands.put("DEL", new DelCommand(memory));
         commands.put("INCR", new IncrCommand(memory));
@@ -30,7 +40,7 @@ public class JRedisHandler extends IoHandlerAdapter {
         commands.put("RPOP", new RPopCommand(memory));
         commands.put("KEYS", new KeysCommand(memory));
         commands.put("COMMAND", new CmdCommand(commands));
-    };
+    }
 
     @Override
     public void messageReceived(IoSession session, Object message) throws Exception {
@@ -41,8 +51,12 @@ public class JRedisHandler extends IoHandlerAdapter {
             session.write(new ErrorReply("ERR unknown command '" + list.get(0) + "'"));
             return;
         }
+        if (requirepass && session.getAttribute("authenticated") == null && command.getClass() != AuthCommand.class) {
+            session.write(new ErrorReply("NOAUTH Authentication required."));
+            return;
+        }
         List<String> parameters = list.subList(1, list.size());
-        session.write(command.eval(parameters));
+        session.write(command.eval(parameters, session));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.seeking.jredis.command;
 
+import org.apache.mina.core.session.IoSession;
 import org.seeking.jredis.Command;
 import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.Reply;
@@ -18,7 +19,7 @@ public class PingCommand implements Command {
     }
 
     @Override
-    public Reply eval(List<String> params) {
+    public Reply eval(List<String> params, IoSession ioSession) {
         return new StatusReply("PONG");
     }
 
