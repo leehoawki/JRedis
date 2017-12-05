@@ -19,8 +19,6 @@ public class JRedisHandler extends IoHandlerAdapter {
 
     boolean requirepass;
 
-    boolean authenticated;
-
     public JRedisHandler(String password) {
         this.password = password;
         if (this.password != null) {
@@ -32,6 +30,7 @@ public class JRedisHandler extends IoHandlerAdapter {
         commands.put("DEL", new DelCommand(memory));
         commands.put("INCR", new IncrCommand(memory));
         commands.put("PING", new PingCommand());
+        commands.put("QUIT", new QuitCommand());
         commands.put("GET", new GetCommand(memory));
         commands.put("SET", new SetCommand(memory));
         commands.put("LPUSH", new LPushCommand(memory));
