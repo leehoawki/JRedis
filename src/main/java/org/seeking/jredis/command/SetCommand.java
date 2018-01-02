@@ -18,7 +18,7 @@ public class SetCommand implements Command {
 
     public SetCommand(Map<String, Object> memory) {
         this.memory = memory;
-        this.commandSpec = new CommandSpec(2, new ArrayList<>(Arrays.asList("readonly")), 1, 1, 1);
+        this.commandSpec = new CommandSpec(-3, new ArrayList<>(Arrays.asList("write", "denyoom")), 1, 1, 1);
     }
 
     @Override

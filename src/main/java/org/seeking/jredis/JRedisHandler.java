@@ -55,7 +55,9 @@ public class JRedisHandler extends IoHandlerAdapter {
             return;
         }
         List<String> parameters = list.subList(1, list.size());
-        if ((command.getCommandSpec().getArity() > 0 && parameters.size() != command.getCommandSpec().getArity()) || parameters.size() < -command.getCommandSpec().getArity()) {
+        if ((command.getCommandSpec().getArity() > 0 && list.size() != command.getCommandSpec().getArity()) || list.size() < -command.getCommandSpec().getArity()) {
+            System.out.println(list.size());
+            System.out.println( -command.getCommandSpec().getArity());
             session.write(new ErrorReply("ERR wrong number of arguments for '" + list.get(0) + "' command"));
             return;
         }
