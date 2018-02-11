@@ -27,7 +27,7 @@ public class IncrCommand implements Command {
         String key = params.get(0);
         Object value = memory.get(key);
         if (value == null) {
-            memory.put(key, 1);
+            memory.put(key, "1");
             return new IntegerReply(1);
         }
         try {

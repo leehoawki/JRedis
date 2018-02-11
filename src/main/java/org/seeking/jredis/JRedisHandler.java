@@ -4,6 +4,7 @@ import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.seeking.jredis.command.*;
+import org.seeking.jredis.io.SnapShot;
 import org.seeking.jredis.reply.ErrorReply;
 import org.seeking.jredis.reply.StatusReply;
 
@@ -12,7 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class JRedisHandler extends IoHandlerAdapter {
-    Map<String, Object> memory = new ConcurrentHashMap<>();
+    Map<String, Object> memory;
 
     Map<String, Command> commands = new CaseInsensitiveMap();
 
@@ -25,6 +26,9 @@ public class JRedisHandler extends IoHandlerAdapter {
         if (this.password != null) {
             this.requirepass = true;
         }
+
+        if (SnapShot.exists()) memory = SnapShot.loads(memory);
+        else memory = new ConcurrentHashMap<>();
 
         commands.put("auth", new AuthCommand(password));
         commands.put("exists", new ExistsCommand(memory));
@@ -39,6 +43,8 @@ public class JRedisHandler extends IoHandlerAdapter {
         commands.put("rpop", new RPopCommand(memory));
         commands.put("keys", new KeysCommand(memory));
         commands.put("command", new CmdCommand(commands));
+        commands.put("save", new SaveCommand(memory));
+        commands.put("bgsave", new BgSaveCommand(memory));
     }
 
     @Override
@@ -57,7 +63,7 @@ public class JRedisHandler extends IoHandlerAdapter {
         List<String> parameters = list.subList(1, list.size());
         if ((command.getCommandSpec().getArity() > 0 && list.size() != command.getCommandSpec().getArity()) || list.size() < -command.getCommandSpec().getArity()) {
             System.out.println(list.size());
-            System.out.println( -command.getCommandSpec().getArity());
+            System.out.println(-command.getCommandSpec().getArity());
             session.write(new ErrorReply("ERR wrong number of arguments for '" + list.get(0) + "' command"));
             return;
         }
