@@ -11,6 +11,7 @@ import org.seeking.jredis.reply.StatusReply;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 
 public class JRedisHandler extends IoHandlerAdapter {
     Map<String, Object> memory;
@@ -27,7 +28,7 @@ public class JRedisHandler extends IoHandlerAdapter {
             this.requirepass = true;
         }
 
-        if (SnapShot.exists()) memory = SnapShot.loads(memory);
+        if (SnapShot.INSTANCE.exists()) memory = SnapShot.INSTANCE.loads(memory);
         else memory = new ConcurrentHashMap<>();
 
         commands.put("auth", new AuthCommand(password));
@@ -44,7 +45,7 @@ public class JRedisHandler extends IoHandlerAdapter {
         commands.put("keys", new KeysCommand(memory));
         commands.put("command", new CmdCommand(commands));
         commands.put("save", new SaveCommand(memory));
-        commands.put("bgsave", new BgSaveCommand(memory));
+        commands.put("bgsave", new BgSaveCommand(memory, Executors.newSingleThreadScheduledExecutor()));
     }
 
     @Override

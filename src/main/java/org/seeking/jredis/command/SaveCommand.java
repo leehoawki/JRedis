@@ -5,6 +5,7 @@ import org.seeking.jredis.Command;
 import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.Reply;
 import org.seeking.jredis.io.SnapShot;
+import org.seeking.jredis.reply.ErrorReply;
 import org.seeking.jredis.reply.StatusReply;
 
 import java.util.ArrayList;
@@ -24,8 +25,9 @@ public class SaveCommand implements Command {
 
     @Override
     public Reply eval(List<String> params, IoSession ioSession) {
-        SnapShot.dump(memory);
-        return new StatusReply("OK");
+        if (SnapShot.INSTANCE.dump(memory))
+            return new StatusReply("OK");
+        else return new ErrorReply("Background save already in progress");
     }
 
     @Override
