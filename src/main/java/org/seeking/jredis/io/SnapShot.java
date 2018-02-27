@@ -1,39 +1,31 @@
 package org.seeking.jredis.io;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.Map;
 
-public enum SnapShot {
-    INSTANCE;
+public class SnapShot implements Serializable{
+    private Checkpoint checkpoint;
 
-    volatile int status = 0;
+    private Map<String, Object> memory;
 
-    static final String FILENAME = "dump.snapshot";
-
-    public boolean exists() {
-        return new File(FILENAME).exists();
+    public SnapShot(Map<String, Object> memory) {
+        this.checkpoint = new Checkpoint();
+        this.memory = memory;
     }
 
-    public Map<String, Object> loads(Map<String, Object> memory) {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(FILENAME))) {
-            return (Map<String, Object>) in.readObject();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException(e);
-        }
+    public Checkpoint getCheckpoint() {
+        return checkpoint;
     }
 
-    public boolean dump(Map<String, Object> memory) {
-        if (status > 0) return false;
-        status = 1;
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(FILENAME))) {
-            out.writeObject(memory);
-            status = 0;
-            return true;
-        } catch (IOException e) {
-            status = 0;
-            throw new IllegalStateException(e);
-        }
+    public void setCheckpoint(Checkpoint checkpoint) {
+        this.checkpoint = checkpoint;
+    }
+
+    public Map<String, Object> getMemory() {
+        return memory;
+    }
+
+    public void setMemory(Map<String, Object> memory) {
+        this.memory = memory;
     }
 }

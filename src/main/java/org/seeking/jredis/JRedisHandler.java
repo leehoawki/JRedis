@@ -4,7 +4,7 @@ import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.seeking.jredis.command.*;
-import org.seeking.jredis.io.SnapShot;
+import org.seeking.jredis.io.RDB;
 import org.seeking.jredis.reply.ErrorReply;
 import org.seeking.jredis.reply.StatusReply;
 
@@ -28,7 +28,7 @@ public class JRedisHandler extends IoHandlerAdapter {
             this.requirepass = true;
         }
 
-        if (SnapShot.INSTANCE.exists()) memory = SnapShot.INSTANCE.loads(memory);
+        if (RDB.INSTANCE.exists()) memory = RDB.INSTANCE.loads(memory);
         else memory = new ConcurrentHashMap<>();
 
         commands.put("auth", new AuthCommand(password));

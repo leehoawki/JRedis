@@ -4,7 +4,7 @@ import org.apache.mina.core.session.IoSession;
 import org.seeking.jredis.Command;
 import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.Reply;
-import org.seeking.jredis.io.SnapShot;
+import org.seeking.jredis.io.RDB;
 import org.seeking.jredis.reply.ErrorReply;
 import org.seeking.jredis.reply.StatusReply;
 
@@ -25,7 +25,7 @@ public class SaveCommand implements Command {
 
     @Override
     public Reply eval(List<String> params, IoSession ioSession) {
-        if (SnapShot.INSTANCE.dump(memory))
+        if (RDB.INSTANCE.dump(memory))
             return new StatusReply("OK");
         else return new ErrorReply("Background save already in progress");
     }
