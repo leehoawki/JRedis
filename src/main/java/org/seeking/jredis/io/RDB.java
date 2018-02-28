@@ -8,14 +8,12 @@ public enum RDB {
 
     volatile int status = 0;
 
-    static final String FILENAME = "dump.snapshot";
-
-    public boolean exists() {
-        return new File(FILENAME).exists();
+    public boolean exists(String filename) {
+        return new File(filename).exists();
     }
 
-    public Map<String, Object> loads(Map<String, Object> memory) {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(FILENAME))) {
+    public Map<String, Object> restore(String filename) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
             SnapShot snapShot = (SnapShot) in.readObject();
             return snapShot.getMemory();
         } catch (IOException e) {
@@ -25,10 +23,10 @@ public enum RDB {
         }
     }
 
-    public boolean dump(Map<String, Object> memory) {
+    public boolean dump(Map<String, Object> memory, String filename) {
         if (status > 0) return false;
         status = 1;
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(FILENAME))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename))) {
             out.writeObject(new SnapShot(memory));
             status = 0;
             return true;

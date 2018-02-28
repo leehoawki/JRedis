@@ -16,19 +16,22 @@ import java.util.concurrent.ScheduledExecutorService;
 public class BgSaveCommand implements Command {
     private Map<String, Object> memory;
 
+    private String filename;
+
     private ScheduledExecutorService ses;
 
     private CommandSpec commandSpec;
 
-    public BgSaveCommand(Map<String, Object> memory, ScheduledExecutorService scheduledExecutorService) {
+    public BgSaveCommand(Map<String, Object> memory, String filename, ScheduledExecutorService scheduledExecutorService) {
         this.memory = memory;
+        this.filename = filename;
         this.ses = scheduledExecutorService;
         this.commandSpec = new CommandSpec(-1, new ArrayList<>(Arrays.asList("admin")), 0, 0, 0);
     }
 
     @Override
     public Reply eval(List<String> params, IoSession ioSession) {
-        ses.submit(() -> RDB.INSTANCE.dump(memory));
+        ses.submit(() -> RDB.INSTANCE.dump(memory, filename));
         return new StatusReply("OK");
     }
 

@@ -16,16 +16,19 @@ import java.util.Map;
 public class SaveCommand implements Command {
     private Map<String, Object> memory;
 
+    private String filename;
+
     private CommandSpec commandSpec;
 
-    public SaveCommand(Map<String, Object> memory) {
+    public SaveCommand(Map<String, Object> memory, String filename) {
         this.memory = memory;
+        this.filename = filename;
         this.commandSpec = new CommandSpec(1, new ArrayList<>(Arrays.asList("admin", "noscript")), 0, 0, 0);
     }
 
     @Override
     public Reply eval(List<String> params, IoSession ioSession) {
-        if (RDB.INSTANCE.dump(memory))
+        if (RDB.INSTANCE.dump(memory, filename))
             return new StatusReply("OK");
         else return new ErrorReply("Background save already in progress");
     }

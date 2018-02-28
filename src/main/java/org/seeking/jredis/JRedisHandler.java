@@ -22,13 +22,15 @@ public class JRedisHandler extends IoHandlerAdapter {
 
     boolean requirepass;
 
+    String filename = "dump.snapshot";
+
     public JRedisHandler(String password) {
         this.password = password;
         if (this.password != null) {
             this.requirepass = true;
         }
 
-        if (RDB.INSTANCE.exists()) memory = RDB.INSTANCE.loads(memory);
+        if (RDB.INSTANCE.exists(filename)) memory = RDB.INSTANCE.restore(filename);
         else memory = new ConcurrentHashMap<>();
 
         commands.put("auth", new AuthCommand(password));
@@ -44,8 +46,8 @@ public class JRedisHandler extends IoHandlerAdapter {
         commands.put("rpop", new RPopCommand(memory));
         commands.put("keys", new KeysCommand(memory));
         commands.put("command", new CmdCommand(commands));
-        commands.put("save", new SaveCommand(memory));
-        commands.put("bgsave", new BgSaveCommand(memory, Executors.newSingleThreadScheduledExecutor()));
+        commands.put("save", new SaveCommand(memory, filename));
+        commands.put("bgsave", new BgSaveCommand(memory, filename, Executors.newSingleThreadScheduledExecutor()));
     }
 
     @Override

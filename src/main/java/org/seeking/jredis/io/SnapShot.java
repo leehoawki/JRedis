@@ -3,7 +3,7 @@ package org.seeking.jredis.io;
 import java.io.Serializable;
 import java.util.Map;
 
-public class SnapShot implements Serializable{
+public class SnapShot implements Serializable {
     private Checkpoint checkpoint;
 
     private Map<String, Object> memory;
