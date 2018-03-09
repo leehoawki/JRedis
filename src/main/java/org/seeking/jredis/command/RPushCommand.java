@@ -4,6 +4,7 @@ import org.apache.mina.core.session.IoSession;
 import org.seeking.jredis.Command;
 import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.Reply;
+import org.seeking.jredis.reply.ErrorReply;
 import org.seeking.jredis.reply.IntegerReply;
 
 import java.util.*;
@@ -22,16 +23,20 @@ public class RPushCommand implements Command {
     public Reply eval(List<String> params, IoSession ioSession) {
         String key = params.get(0);
         List<String> value = params.subList(1, params.size());
-        LinkedList<String> list = (LinkedList<String>) memory.get(key);
+        Object list = memory.get(key);
+        LinkedList<String> l;
         if (list == null) {
-            list = new LinkedList<>(value);
-            memory.put(key, list);
-        } else {
+            l = new LinkedList<>(value);
+            memory.put(key, l);
+        } else if (list instanceof LinkedList) {
+            l = (LinkedList<String>) list;
             for (String string : value) {
-                list.add(string);
+                l.add(string);
             }
+        } else {
+            return new ErrorReply(ErrorReply.WRONG_TYPE);
         }
-        return new IntegerReply(list.size());
+        return new IntegerReply(l.size());
     }
 
     @Override

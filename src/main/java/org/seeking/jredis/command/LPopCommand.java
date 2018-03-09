@@ -5,6 +5,7 @@ import org.seeking.jredis.Command;
 import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.Reply;
 import org.seeking.jredis.reply.BulkReply;
+import org.seeking.jredis.reply.ErrorReply;
 
 import java.util.*;
 
@@ -21,11 +22,14 @@ public class LPopCommand implements Command {
     @Override
     public Reply eval(List<String> params, IoSession ioSession) {
         String key = params.get(0);
-        LinkedList<String> list = (LinkedList<String>) memory.get(key);
+        Object list = memory.get(key);
         if (list == null) {
             return new BulkReply(null);
+        } else if (list instanceof LinkedList) {
+            LinkedList<String> l = (LinkedList<String>) list;
+            return new BulkReply(l.poll());
         } else {
-            return new BulkReply(list.poll());
+            return new ErrorReply(ErrorReply.WRONG_TYPE);
         }
     }
 

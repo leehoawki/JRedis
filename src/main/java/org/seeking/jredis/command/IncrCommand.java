@@ -32,10 +32,10 @@ public class IncrCommand implements Command {
         }
         try {
             int ret = Integer.parseInt(value.toString()) + 1;
-            memory.put(key, ret);
+            memory.put(key, String.valueOf(ret));
             return new IntegerReply(ret);
         } catch (NumberFormatException ex) {
-            return new ErrorReply("WRONGTYPE Operation against a key holding the wrong kind of value");
+            return new ErrorReply(ErrorReply.WRONG_TYPE);
         }
     }
 

@@ -13,4 +13,6 @@ public class ErrorReply implements Reply {
     public String getMessage() {
         return "-" + status + "\r\n";
     }
+
+    public static final String WRONG_TYPE = "WRONGTYPE Operation against a key holding the wrong kind of value";
 }

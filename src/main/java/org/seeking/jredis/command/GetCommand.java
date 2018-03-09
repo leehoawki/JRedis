@@ -5,6 +5,7 @@ import org.seeking.jredis.Command;
 import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.reply.BulkReply;
 import org.seeking.jredis.Reply;
+import org.seeking.jredis.reply.ErrorReply;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +27,8 @@ public class GetCommand implements Command {
         String key = params.get(0);
         Object value = memory.get(key);
         if (value == null) return new BulkReply(null);
-        return new BulkReply(value.toString());
+        if (value instanceof String) return new BulkReply((String) value);
+        return new ErrorReply(ErrorReply.WRONG_TYPE);
     }
 
     @Override

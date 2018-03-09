@@ -20,6 +20,7 @@ public class IncrCommandTest extends TestCase {
 
     @Test
     public void test() {
+        jedis.del("incrtest");
         jedis.incr("incrtest");
         Assert.assertEquals("1", jedis.get("incrtest"));
         Assert.assertEquals(Long.valueOf(2), jedis.incr("incrtest"));
