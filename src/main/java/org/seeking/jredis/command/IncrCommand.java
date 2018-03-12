@@ -6,7 +6,7 @@ import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.Reply;
 import org.seeking.jredis.reply.ErrorReply;
 import org.seeking.jredis.reply.IntegerReply;
-import org.seeking.jredis.type.SDS;
+import org.seeking.jredis.type.Strings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,18 +28,18 @@ public class IncrCommand implements Command {
         String key = params.get(0);
         Object value = memory.get(key);
         if (value == null) {
-            memory.put(key, SDS.create("1"));
+            memory.put(key, Strings.create("1"));
             return new IntegerReply(1);
         }
-        if (value instanceof SDS) {
-            SDS sds = (SDS) value;
+        if (value instanceof Strings) {
+            Strings sds = (Strings) value;
             if (sds.isExpired()) {
-                memory.put(key, SDS.create("1"));
+                memory.put(key, Strings.create("1"));
                 return new IntegerReply(1);
             }
             try {
                 int ret = Integer.parseInt(sds.val()) + 1;
-                memory.put(key, SDS.create(String.valueOf(ret)));
+                memory.put(key, Strings.create(String.valueOf(ret)));
                 return new IntegerReply(ret);
             } catch (NumberFormatException ex) {
                 return new ErrorReply(ErrorReply.INT_OUT_OF_RANGE);

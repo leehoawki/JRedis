@@ -2,12 +2,12 @@ package org.seeking.jredis.type;
 
 import java.util.Date;
 
-public class SDS implements Expirable {
+public class Strings implements Expirable {
     final String val;
 
     long time;
 
-    public SDS(String val) {
+    public Strings(String val) {
         this.val = val;
     }
 
@@ -37,8 +37,8 @@ public class SDS implements Expirable {
         time = new Date().getTime() + second * 1000;
     }
 
-    public static SDS create(String val) {
-        return new SDS(val);
+    public static Strings create(String val) {
+        return new Strings(val);
     }
 
     public String val() {

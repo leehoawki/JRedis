@@ -5,7 +5,7 @@ import org.seeking.jredis.Command;
 import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.Reply;
 import org.seeking.jredis.reply.StatusReply;
-import org.seeking.jredis.type.SDS;
+import org.seeking.jredis.type.Strings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +26,7 @@ public class SetCommand implements Command {
     public Reply eval(List<String> params, IoSession ioSession) {
         String key = params.get(0);
         String value = params.get(1);
-        memory.put(key, SDS.create(value));
+        memory.put(key, Strings.create(value));
         return new StatusReply("OK");
     }
 

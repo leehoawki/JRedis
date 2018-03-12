@@ -6,6 +6,7 @@ import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.Reply;
 import org.seeking.jredis.reply.BulkReply;
 import org.seeking.jredis.reply.ErrorReply;
+import org.seeking.jredis.type.Lists;
 
 import java.util.*;
 
@@ -25,8 +26,12 @@ public class RPopCommand implements Command {
         Object list = memory.get(key);
         if (list == null) {
             return new BulkReply(null);
-        } else if (list instanceof LinkedList) {
-            LinkedList<String> l = (LinkedList<String>) list;
+        } else if (list instanceof Lists) {
+            Lists l = (Lists) list;
+            if (l.isExpired()) {
+                this.memory.remove(key);
+                return new BulkReply(null);
+            }
             return new BulkReply(l.pollLast());
         } else {
             return new ErrorReply(ErrorReply.WRONG_TYPE);
