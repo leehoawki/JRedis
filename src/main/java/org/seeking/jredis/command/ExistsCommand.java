@@ -3,8 +3,8 @@ package org.seeking.jredis.command;
 import org.apache.mina.core.session.IoSession;
 import org.seeking.jredis.Command;
 import org.seeking.jredis.CommandSpec;
-import org.seeking.jredis.reply.IntegerReply;
 import org.seeking.jredis.Reply;
+import org.seeking.jredis.reply.IntegerReply;
 
 import java.util.ArrayList;
 import java.util.Arrays;

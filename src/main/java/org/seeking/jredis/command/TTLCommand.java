@@ -4,33 +4,36 @@ import org.apache.mina.core.session.IoSession;
 import org.seeking.jredis.Command;
 import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.Reply;
-import org.seeking.jredis.reply.StatusReply;
-import org.seeking.jredis.type.SDS;
+import org.seeking.jredis.reply.IntegerReply;
+import org.seeking.jredis.type.Expirable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class SetCommand implements Command {
+public class TTLCommand implements Command {
     private Map<String, Object> memory;
 
     private CommandSpec commandSpec;
 
-    public SetCommand(Map<String, Object> memory) {
+    public TTLCommand(Map<String, Object> memory) {
         this.memory = memory;
-        this.commandSpec = new CommandSpec(-3, new ArrayList<>(Arrays.asList("write", "denyoom")), 1, 1, 1);
+        this.commandSpec = new CommandSpec(2, new ArrayList<>(Arrays.asList("readonly", "fast")), 1, 1, 1);
     }
 
     @Override
     public Reply eval(List<String> params, IoSession ioSession) {
         String key = params.get(0);
-        String value = params.get(1);
-        memory.put(key, SDS.create(value));
-        return new StatusReply("OK");
+        Expirable value = (Expirable) memory.get(key);
+        if (value == null) return new IntegerReply(-2);
+        if (value.isExpired()) {
+            this.memory.remove(key);
+            return new IntegerReply(-2);
+        }
+        return new IntegerReply(value.ttl());
     }
 
-    @Override
     public CommandSpec getCommandSpec() {
         return commandSpec;
     }

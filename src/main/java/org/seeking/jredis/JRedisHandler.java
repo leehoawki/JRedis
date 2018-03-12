@@ -35,6 +35,7 @@ public class JRedisHandler extends IoHandlerAdapter {
 
         commands.put("auth", new AuthCommand(password));
         commands.put("exists", new ExistsCommand(memory));
+        commands.put("expire", new ExpireCommand(memory));
         commands.put("del", new DelCommand(memory));
         commands.put("incr", new IncrCommand(memory));
         commands.put("ping", new PingCommand());
@@ -47,6 +48,7 @@ public class JRedisHandler extends IoHandlerAdapter {
         commands.put("keys", new KeysCommand(memory));
         commands.put("command", new CmdCommand(commands));
         commands.put("save", new SaveCommand(memory, filename));
+        commands.put("ttl", new TTLCommand(memory));
         commands.put("bgsave", new BgSaveCommand(memory, filename, Executors.newSingleThreadScheduledExecutor()));
     }
 
@@ -65,8 +67,6 @@ public class JRedisHandler extends IoHandlerAdapter {
         }
         List<String> parameters = list.subList(1, list.size());
         if ((command.getCommandSpec().getArity() > 0 && list.size() != command.getCommandSpec().getArity()) || list.size() < -command.getCommandSpec().getArity()) {
-            System.out.println(list.size());
-            System.out.println(-command.getCommandSpec().getArity());
             session.write(new ErrorReply("ERR wrong number of arguments for '" + list.get(0) + "' command"));
             return;
         }
