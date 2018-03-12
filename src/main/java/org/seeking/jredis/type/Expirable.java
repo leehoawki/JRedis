@@ -6,4 +6,8 @@ public interface Expirable {
     int ttl();
 
     boolean isExpired();
+
+    boolean isExpirable();
+
+    void persist();
 }

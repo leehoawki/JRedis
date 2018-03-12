@@ -23,6 +23,16 @@ public class SDS implements Expirable {
     }
 
     @Override
+    public boolean isExpirable() {
+        return time > 0;
+    }
+
+    @Override
+    public void persist() {
+        time = 0;
+    }
+
+    @Override
     public void expire(int second) {
         time = new Date().getTime() + second * 1000;
     }
