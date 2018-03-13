@@ -1,10 +1,13 @@
 package org.seeking.jredis;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.seeking.jredis.command.*;
 import org.seeking.jredis.io.RDB;
+import org.seeking.jredis.job.ExpirationJob;
+import org.seeking.jredis.job.Job;
 import org.seeking.jredis.reply.ErrorReply;
 import org.seeking.jredis.reply.StatusReply;
 
@@ -12,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class JRedisHandler extends IoHandlerAdapter {
     Map<String, Object> memory;
@@ -23,6 +28,10 @@ public class JRedisHandler extends IoHandlerAdapter {
     boolean requirepass;
 
     String filename = "dump.snapshot";
+
+    ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(10);
+
+    Map<String, Job> jobs = new HashedMap();
 
     public JRedisHandler(String password) {
         this.password = password;
@@ -52,6 +61,12 @@ public class JRedisHandler extends IoHandlerAdapter {
         commands.put("save", new SaveCommand(memory, filename));
         commands.put("ttl", new TTLCommand(memory));
         commands.put("bgsave", new BgSaveCommand(memory, filename, Executors.newSingleThreadScheduledExecutor()));
+
+        jobs.put("expiration", new ExpirationJob(memory));
+
+        for (Job job : jobs.values()) {
+            scheduledThreadPool.scheduleWithFixedDelay(job.getRunnable(), job.delay(), job.rate(), TimeUnit.MILLISECONDS);
+        }
     }
 
     @Override

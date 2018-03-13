@@ -5,6 +5,7 @@ import org.seeking.jredis.Command;
 import org.seeking.jredis.CommandSpec;
 import org.seeking.jredis.Reply;
 import org.seeking.jredis.reply.IntegerReply;
+import org.seeking.jredis.type.Expirable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,8 +25,14 @@ public class ExistsCommand implements Command {
     @Override
     public Reply eval(List<String> params, IoSession ioSession) {
         String key = params.get(0);
-        if (memory.containsKey(key)) return new IntegerReply(1);
-        return new IntegerReply(0);
+        Object value = memory.get(key);
+        if (value == null) return new IntegerReply(0);
+
+        if (value instanceof Expirable && ((Expirable) value).isExpired()) {
+            this.memory.remove(key);
+            return new IntegerReply(0);
+        }
+        return new IntegerReply(1);
     }
 
     @Override
