@@ -1,10 +1,11 @@
 package org.seeking.jredis.type;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 
-public class Lists implements Expirable {
+public class Lists implements Expirable, Serializable {
     final LinkedList<String> val;
 
     long time;

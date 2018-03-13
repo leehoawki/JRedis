@@ -8,6 +8,7 @@ import org.seeking.jredis.command.*;
 import org.seeking.jredis.io.RDB;
 import org.seeking.jredis.job.ExpirationJob;
 import org.seeking.jredis.job.Job;
+import org.seeking.jredis.job.SnapshotJob;
 import org.seeking.jredis.reply.ErrorReply;
 import org.seeking.jredis.reply.StatusReply;
 
@@ -63,6 +64,7 @@ public class JRedisHandler extends IoHandlerAdapter {
         commands.put("bgsave", new BgSaveCommand(memory, filename, Executors.newSingleThreadScheduledExecutor()));
 
         jobs.put("expiration", new ExpirationJob(memory));
+        jobs.put("snapshot", new SnapshotJob(memory, filename));
 
         for (Job job : jobs.values()) {
             scheduledThreadPool.scheduleWithFixedDelay(job.getRunnable(), job.delay(), job.rate(), TimeUnit.MILLISECONDS);

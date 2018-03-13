@@ -1,8 +1,9 @@
 package org.seeking.jredis.type;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Strings implements Expirable {
+public class Strings implements Expirable, Serializable {
     final String val;
 
     long time;
