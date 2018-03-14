@@ -9,6 +9,7 @@ import org.seeking.jredis.io.RDB;
 import org.seeking.jredis.job.ExpirationJob;
 import org.seeking.jredis.job.Job;
 import org.seeking.jredis.job.SnapshotJob;
+import org.seeking.jredis.pubsub.ChannelManager;
 import org.seeking.jredis.reply.ErrorReply;
 import org.seeking.jredis.reply.StatusReply;
 
@@ -60,6 +61,9 @@ public class JRedisHandler extends IoHandlerAdapter {
         commands.put("keys", new KeysCommand(memory));
         commands.put("command", new CmdCommand(commands));
         commands.put("save", new SaveCommand(memory, filename));
+        commands.put("subscribe", new SubscribeCommand());
+        commands.put("unsubscribe", new UnSubscribeCommand());
+        commands.put("publish", new PublishCommand());
         commands.put("ttl", new TTLCommand(memory));
         commands.put("bgsave", new BgSaveCommand(memory, filename, Executors.newSingleThreadScheduledExecutor()));
 
@@ -93,11 +97,17 @@ public class JRedisHandler extends IoHandlerAdapter {
             session.write(new ErrorReply("NOAUTH Authentication required."));
             return;
         }
-        session.write(command.eval(parameters, session));
+        Reply reply = command.eval(parameters, session);
+        if (reply != null) session.write(reply);
     }
 
     @Override
     public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
         System.out.println(cause);
+    }
+
+    @Override
+    public void sessionClosed(IoSession session) throws Exception {
+        ChannelManager.INSTANCE.remove(session);
     }
 }
