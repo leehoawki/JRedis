@@ -3,15 +3,15 @@ package org.seeking.jredis.type;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class Lists implements Expirable, Serializable {
-    final LinkedList<String> val;
+    final ConcurrentLinkedDeque<String> val;
 
     long time;
 
     public Lists(Collection<String> val) {
-        this.val = new LinkedList(val);
+        this.val = new ConcurrentLinkedDeque(val);
     }
 
     @Override
@@ -38,10 +38,6 @@ public class Lists implements Expirable, Serializable {
     @Override
     public void expire(int second) {
         time = new Date().getTime() + second * 1000;
-    }
-
-    public LinkedList<String> val() {
-        return val;
     }
 
     public int size() {
