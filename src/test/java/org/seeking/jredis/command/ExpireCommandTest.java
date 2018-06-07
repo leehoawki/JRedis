@@ -1,19 +1,22 @@
 package org.seeking.jredis.command;
 
-import junit.framework.TestCase;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import redis.clients.jedis.Jedis;
 
-public class ExpireCommandTest extends TestCase {
+@RunWith(JRedisTestRunner.class)
+public class ExpireCommandTest {
     Jedis jedis;
 
-    @Override
+    @Before
     public void setUp() {
         jedis = new Jedis("localhost", 9000);
     }
 
-    @Override
+    @After
     public void tearDown() {
         jedis.close();
     }
