@@ -1,4 +1,4 @@
-package org.seeking.jredis.command;
+package org.seeking.jredis;
 
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.session.IdleStatus;
@@ -6,8 +6,6 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
-import org.seeking.jredis.JRedisCodecFactory;
-import org.seeking.jredis.JRedisHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
